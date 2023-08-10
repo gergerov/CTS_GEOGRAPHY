@@ -11,5 +11,5 @@ class Country(Base):
     country_name = Column(String, unique=True, index=True)
     country_iso_code = Column(String, unique=True, index=True)
     created = Column(DateTime, server_default=func.now())
-    creator  = Column(String, unique=False, index=False)
+    creator = Column(String, unique=False, index=False)
     is_active = Column(Boolean, default=True)

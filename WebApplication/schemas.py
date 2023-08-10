@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from datetime import datetime
 import typing
+
 
 class CountryBase(BaseModel):
     country_name: str
@@ -27,7 +27,7 @@ class Airport(AirportsBase):
     country_iso_code: str
     country_name: str
     airport_latitude: typing.Optional[str] = None
-    airport_longtitude: typing.Optional[str]  = None
-    
+    airport_longtitude: typing.Optional[str] = None
+
     class Config:
         from_attributes = True

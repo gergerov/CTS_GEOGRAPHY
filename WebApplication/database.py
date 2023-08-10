@@ -9,8 +9,8 @@ database = DB_DATABASE
 driver = DB_DRIVER
 
 engine = create_engine(
-    f'mssql+pyodbc://{server}/{database}?trusted_connection=yes&driver={driver}', 
-    echo=True
+    f"mssql+pyodbc://{server}/{database}?trusted_connection=yes&driver={driver}",
+    echo=True,
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
