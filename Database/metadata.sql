@@ -446,6 +446,74 @@ End
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'v_airport'
 GO
+
+USE [CTS_GEOGRAPHY]
+GO
+
+/****** Object:  StoredProcedure [dbo].[api#airports]    Script Date: 10.08.2023 3:10:00 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[api#airports]
+  @point_code nvarchar(4) = null,
+	@point_name nvarchar(255) = null,
+  @page int = 0,
+  @size int = 24
+AS
+-- =============================================
+-- Author:		<GGaev>
+-- Create date: <100823>
+-- Description:	<аэропорты для api>
+-- =============================================
+BEGIN
+
+	SET NOCOUNT ON;
+
+  begin try
+    set @point_name = '%'+isnull(@point_name,'')+'%';
+    select 
+      va.airport_iata_code,
+      va.airport_name_eng,
+      va.airport_name_rus,
+      va.city_name_eng,
+      va.city_name_rus,
+      va.country_iso_code,
+      va.country_name,
+      va.airport_latitude,
+      va.airport_longtitude
+    from dbo.v_airport as va
+    where va.airport_iata_code like '%'+isnull(@point_code,'')+'%' 
+    and   (
+          va.airport_name_eng like @point_name
+      or  va.airport_name_rus like @point_name
+      or  va.city_name_eng like @point_name
+      or  va.city_name_rus like @point_name
+    )
+    order by 
+      va.airport_name_rus,
+      va.airport_name_eng
+    offset @page*@size rows
+    FETCH FIRST @size ROWS ONLY
+    return (0);
+  end try
+  begin catch
+    ;throw
+    return (-1);
+  end catch
+
+	
+
+END
+GO
+
+
+
+
 USE [master]
 GO
 ALTER DATABASE [CTS_GEOGRAPHY] SET  READ_WRITE 
