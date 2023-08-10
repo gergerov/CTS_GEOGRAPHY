@@ -1,7 +1,8 @@
+""" db models for fast-api CTS_GEORGAPHY """
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from database import Base
+from source.database import Base
 
 
 class Country(Base):

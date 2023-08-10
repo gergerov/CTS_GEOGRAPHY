@@ -1,6 +1,7 @@
+""" crud operations for fast-api CTS_GEORGAPHY """
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, text, String
-import models, resultsets
+from source import sp, models
 
 
 def get_country(db: Session, q: str, page: int, size: int):
@@ -22,7 +23,7 @@ def get_country(db: Session, q: str, page: int, size: int):
 
 
 def get_airports(db: Session, iata_code: str, q: str, page: int, size: int):
-    return resultsets.airports_resultset(
+    return sp.sp_api_airports(
         db.execute(
             text("exec dbo.api#airports :point_code, :point_name, :page, :size"),
             params={

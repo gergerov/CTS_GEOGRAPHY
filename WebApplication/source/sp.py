@@ -1,8 +1,9 @@
-import schemas
+""" stored procedures adapter for fast-api CTS_GEORGAPHY """
+from source import schemas
 import typing
 
 
-def airports_resultset(
+def sp_api_airports(
     sp_result: typing.List[typing.Set],
 ) -> typing.List[schemas.Airport]:
     airport_list = []

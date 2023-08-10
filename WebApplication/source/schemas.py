@@ -1,3 +1,4 @@
+""" response models for fast-api CTS_GEORGAPHY """
 from pydantic import BaseModel
 import typing
 
