@@ -1,11 +1,34 @@
-FROM python:3.9
+FROM python:3.11-buster
 
-WORKDIR /CTS_GEOGRAPHY
+WORKDIR /code
 
-COPY ./req.txt /CTS_GEOGRAPHY/req.txt
+ENV ACCEPT_EULA=Y
 
-RUN pip install --no-cache-dir --upgrade -r /CTS_GEOGRAPHY/req.txt
+# ENV CTS_GEOGRAPHY_DB_SERVER="192.168.31.8:41433" dev
+ENV CTS_GEOGRAPHY_DB_SERVER="172.17.0.2,1433"
+ENV CTS_GEOGRAPHY_DB_DATABASE="CTS_GEOGRAPHY"
+ENV CTS_GEOGRAPHY_DB_DRIVER="ODBC+Driver+17+for+SQL+Server"
+ENV CTS_GEOGRAPHY_DB_UID="FAST_API_CTS_GEOGRAPHY"
+ENV CTS_GEOGRAPHY_DB_PWD="HhHh~12345678"
 
-COPY ./source /CTS_GEOGRAPHY/app
 
-CMD ["uvicorn", "source.app:app", "--proxy-headers", "--host",  "0.0.0.0", "--port", "80"]
+RUN apt-get update -y && apt-get update \
+  && apt-get install -y --no-install-recommends curl gcc g++ gnupg unixodbc-dev
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+  && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends --allow-unauthenticated msodbcsql17 mssql-tools \
+  && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile \
+  && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+
+COPY ./req.txt /code/req.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/req.txt
+
+COPY ./source /code/source
+COPY ./source/config.prod.py /code/source/config.py
+
+CMD ["uvicorn", "source.app:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
+# CMD ["sleep", "infinity"]
+# uvicorn source.app:app --host 0.0.0.0 --port 80

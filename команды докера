@@ -1,0 +1,33 @@
+# создание сети net_cts
+docker network create -d bridge net_cts
+
+
+docker build -t img_sqlserver . #
+docker run --name cnt_sqlserver -p 50001:1433 -d img_sqlserver
+docker run --net=net_cts --name cnt_sqlserver -p 50001:1433 -d img_sqlserver  # запуск контейнера sqlserver 
+
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '<YourPassword>' # подключение к БД
+
+/opt/mssql/bin/sqlservr # запуск руками
+
+
+
+# fastapi app cts_geography
+docker build -t img_fastapi_cts_geography .
+docker run --net=net_cts --name cnt_fastapi_cts_geography -p 50002:80 -d img_fastapi_cts_geography  # запуск контейнера fastapi
+docker run --name cnt_fastapi_cts_geography -p 50002:80 -d img_fastapi_cts_geography 
+
+
+
+docker run --net=net_cts --name cnt_fastapi_cts_geography --link cnt_sqlserver img_fastapi_cts_geography -p 50002:80 -d img_fastapi_cts_geography 
+
+docker run --net=net_cts --name cnt_fastapi_cts_geography --link cnt_sqlserver:cnt_sqlserver -p 50002:80 -d img_fastapi_cts_geography 
+# решить проблему с видимостью сетей
+
+
+
+# подключение sql_server к сети net_cts
+docker network connect net_cts cnt_sqlserver
+
+
+docker run -d img_fastapi_cts_geography -P 50002:80 --name cnt_fastapi_cts_geography --link cnt_sqlserver:cnt_sqlserver

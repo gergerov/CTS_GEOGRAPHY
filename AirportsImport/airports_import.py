@@ -2,9 +2,22 @@ import csv
 import pyodbc
 from airports_import_config import *
 
+if TRUSTED_CONNECTION == 'yes':
+    connection_string = f"Driver={DB_DRIVER};Server={DB_SERVER};Database={DB_NAME};Trusted_Connection={TRUSTED_CONNECTION};"
 
-connection_string = f"Driver={DB_DRIVER};Server={DB_SERVER};Database={DB_NAME};Trusted_Connection={TRUSTED_CONNECTION};"
+else:
+    # microsoft docs 
+    # https://learn.microsoft.com/ru-ru/sql/connect/python/pyodbc/step-3-proof-of-concept-connecting-to-sql-using-pyodbc?view=sql-server-ver16
+    # cnxn = pyodbc.connect(
+    # 'DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';ENCRYPT=yes;UID='+username+';PWD='+ password
+    # )
+    connection_string = f"Driver={DB_DRIVER};Server={DB_SERVER};Database={DB_NAME};UID={DB_UID};PWD={DB_PWD}"
+
+# connection_string = 'mssql+pyodbc://SA:HhHh~12345678@172.17.0.2,1433/CTS_GEOGRAPHY?driver={DB_DRIVER}'
+print(connection_string)
 _connection = pyodbc.connect(connection_string, timeout=10, autocommit=True)
+
+
 
 with open(CSV_FILEPATH, newline='') as f:
     rcsv = csv.reader(f, delimiter='|')

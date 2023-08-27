@@ -1,0 +1,2 @@
+hostport 50001 -> 50001 sqlserver (поменять порт в dockerfile)
+hostport 50002 -> 80 fastapiapp cts_geography

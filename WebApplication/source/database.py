@@ -2,15 +2,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from source.config import *
+from source.config import DB_CONNECTION_STRING
 
-
-server = DB_SERVER
-database = DB_DATABASE
-driver = DB_DRIVER
 
 engine = create_engine(
-    f"mssql+pyodbc://{server}/{database}?trusted_connection=yes&driver={driver}",
+    DB_CONNECTION_STRING,
     echo=True,
 )
 
